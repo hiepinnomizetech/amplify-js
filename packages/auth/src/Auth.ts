@@ -1561,6 +1561,47 @@ export class AuthClass {
 		this.user = null;
 	}
 
+	/**
+	 * Global Sign out method
+	 * @
+	 * @return - A promise resolved if success
+	 */
+	public async globalSignOut(): Promise<any> {
+		if (!this.userPool) {
+			logger.debug('no Congito User pool');
+			return;
+		}
+
+		const user = this.userPool.getCurrentUser();
+
+		if (!user) {
+			logger.debug('no current Cognito user');
+		}
+
+		return new Promise((res, rej) => {
+			logger.debug('user global sign out', user);
+			// in order to use global signout
+			// we must validate the user as an authenticated user by using getSession
+			user.getSession((err, result) => {
+				if (err) {
+					logger.debug('failed to get the user session', err);
+					return rej(err);
+				}
+
+				user.globalSignOut({
+					onSuccess: data => {
+						logger.debug('global sign out success');
+						return res();
+					},
+					onFailure: err => {
+						logger.debug('global sign out failed', err);
+						return rej(err);
+					},
+				});
+			});
+		});
+	}
+
 	private async cleanCachedItems() {
 		// clear cognito cached item
 		await Credentials.clear();

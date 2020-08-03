@@ -4,6 +4,7 @@
 	"version": "0.1.30",
 	"description": "",
 	"scripts": {
+		"prepare": "yarn build",
 		"setup-dev": "yarn && yarn bootstrap && yarn link-all && yarn build",
 		"bootstrap": "lerna bootstrap",
 		"test": "lerna run test --stream",
